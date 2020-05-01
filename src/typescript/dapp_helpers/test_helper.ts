@@ -1,8 +1,9 @@
-import { Checker } from './../checker';
 import * as $ from 'jquery';
 
+import { Checker } from '../checker';
 import { DappHelper } from './dapp_helper';
 import { Finder } from '../finder';
+import { HtmlHelper } from '../html_helper';
 import { MentionOrigin } from '../enums/mention_origin';
 import { Mention } from '../models/mention';
 
@@ -28,8 +29,13 @@ export class TestHelper implements DappHelper {
     private async onButtonClick(): Promise<void> {
         const mentions: Mention[] = Finder.findMentions(this.post.value, MentionOrigin.POST);
         const wrongMentions: Mention[] = await Checker.filterWrongMentions(mentions);
-        console.log(wrongMentions);
-        this.button.click();
+        if(wrongMentions.length > 0) this.showDialog(wrongMentions);
+        else this.button.click();
+    }
+
+    private showDialog(mentions: Mention[]): void {
+        const mentionsDialog: HTMLElement = HtmlHelper.mentionsDialog(mentions, () => this.button.click());
+        $('body').append(mentionsDialog);
     }
 
     onUrlChange(_url: string): void {
