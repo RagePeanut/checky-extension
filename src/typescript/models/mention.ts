@@ -2,24 +2,27 @@ import { MentionOrigin } from '../enums/mention_origin';
 import { Suggester } from '../suggester';
 
 export class Mention {
-    readonly mention: string;
-    readonly rawMention: string;
+    readonly username: string;
+    readonly raw: string;
     readonly origin: MentionOrigin;
+    readonly extracts: string[];
     private _suggestions: string[];
     private _suggestionsPlus: string[];
 
-    constructor(rawMention: string, origin: MentionOrigin) {
-        this.rawMention = rawMention.trim();
-        const splits: string[] = rawMention.split("@");
-        this.mention = splits[splits.length - 1].toLowerCase();
+    constructor(raw: string, username: string, origin: MentionOrigin, extracts: string[]) {
+        this.raw = raw;
+        this.username = username;
         this.origin = origin;
+        this.extracts = extracts;
     }
 
     get suggestions(): string[] {
-        return this._suggestions || Suggester.suggestUsernames([ this.mention ]);
+        if(!this._suggestions) this._suggestions = Suggester.suggestUsernames([ this.username ]);
+        return this._suggestions;
     };
 
     get suggestionsPlus(): string[] {
-        return this._suggestionsPlus || Suggester.suggestUsernames(this.suggestions);
+        if(!this._suggestionsPlus) this._suggestionsPlus = Suggester.suggestUsernames(this.suggestions);
+        return this._suggestionsPlus;
     }
 }

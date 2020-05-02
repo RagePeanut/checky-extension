@@ -6,6 +6,7 @@ export class HtmlHelper {
     private static _mentionsDialog: string;
     private static _mentionOverview: string;
     private static _mentionSuggestion: string;
+    private static _mentionExtract: string;
 
     private static mentionIndex: number;
 
@@ -13,6 +14,7 @@ export class HtmlHelper {
         HtmlHelper._mentionsDialog = await $.get(chrome.runtime.getURL("html/mentions_dialog.html"));
         HtmlHelper._mentionOverview = await $.get(chrome.runtime.getURL("html/mention_overview.html"));
         HtmlHelper._mentionSuggestion = await $.get(chrome.runtime.getURL("html/mention_suggestion.html"));
+        HtmlHelper._mentionExtract = await $.get(chrome.runtime.getURL("html/mention_extract.html"));
     }
 
     static mentionsDialog(mentions: Mention[], onClose: VoidCallback): HTMLElement {
@@ -54,15 +56,23 @@ export class HtmlHelper {
     }
 
     private static mentionOverview(mention: Mention): HTMLElement {
-        const overview: HTMLElement = $.parseHTML(HtmlHelper._mentionOverview.replace(/%mention%/g, mention.rawMention))[0] as HTMLElement;
+        const overview: HTMLElement = $.parseHTML(HtmlHelper._mentionOverview.replace(/%mention%/g, mention.raw))[0] as HTMLElement;
         const select: HTMLElement = $("<select></select>").append(HtmlHelper.mentionSuggestions(mention.suggestions)).get()[0];
-        overview.getElementsByClassName("checky__mention-overview-suggestions")[0].appendChild(select);
-        // TODO: append extracts to overview
+        $(overview).find(".checky__mention-overview-suggestions").append(select);
+        $(overview).find(".checky__mention-overview-extracts").append(HtmlHelper.mentionExtracts(mention.extracts));
         return overview as HTMLElement;
     }
 
     private static mentionSuggestions(suggestions: string[]): HTMLElement[] {
-        const options: string = suggestions.map(suggestion => HtmlHelper._mentionSuggestion.replace(/%suggestion%/g, suggestion)).join("");
+        const options: string = suggestions.map(suggestion => HtmlHelper._mentionSuggestion.replace(/%suggestion%/g, suggestion))
+                                           .join("");
         return $(options).get();
+    }
+
+    private static mentionExtracts(extracts: string[]): HTMLElement[] {
+        const divs: string = extracts.map((extract, index) => HtmlHelper._mentionExtract.replace(/%extract_number%/g, (index + 1).toString())
+                                                                                        .replace(/%extract%/g, extract))
+                                     .join("");
+        return $(divs).get();
     }
 }
