@@ -8,9 +8,13 @@ export class Finder {
         const mentions: Mention[] = [];
         let match: RegExpExecArray = Finder.MENTION_REGEX.exec(text);
         while(match != null) {
-            const rawMention: string = match[0].substring(1);
-            const mention: Mention = new Mention(rawMention, match[2], origin, Finder.findExtracts(rawMention, text));
-            mentions.push(mention);
+            const username: string = match[2];
+            // Testing for duplicates
+            if(!mentions.some(mention => mention.username === username)) {
+                const rawMention: string = match[0].substring(1);
+                const mention: Mention = new Mention(rawMention, username, origin, Finder.findExtracts(rawMention, text));
+                mentions.push(mention);
+            }
             match = Finder.MENTION_REGEX.exec(text);
         }
         return mentions;
