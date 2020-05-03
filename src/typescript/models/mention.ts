@@ -6,23 +6,21 @@ export class Mention {
     readonly raw: string;
     readonly origin: MentionOrigin;
     readonly extracts: string[];
-    private _suggestions: string[];
-    private _suggestionsPlus: string[];
+    readonly suggester: Suggester;
 
     constructor(raw: string, username: string, origin: MentionOrigin, extracts: string[]) {
         this.raw = raw;
         this.username = username;
         this.origin = origin;
         this.extracts = extracts;
+        this.suggester = new Suggester(username);
     }
 
-    get suggestions(): string[] {
-        if(!this._suggestions) this._suggestions = Suggester.suggestUsernames([ this.username ]);
-        return this._suggestions;
+    async getSuggestions(): Promise<string[]> {
+        return this.suggester.getSuggestions();
     };
 
-    get suggestionsPlus(): string[] {
-        if(!this._suggestionsPlus) this._suggestionsPlus = Suggester.suggestUsernames(this.suggestions);
-        return this._suggestionsPlus;
+    async getSuggestionsPlus(): Promise<string[]> {
+        return this.suggester.getExtendedSuggestions();
     }
 }

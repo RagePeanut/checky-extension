@@ -33,8 +33,8 @@ export class TestHelper implements DappHelper {
         else this.button.click();
     }
 
-    private showDialog(mentions: Mention[]): void {
-        const mentionsDialog: HTMLElement = HtmlHelper.mentionsDialog(mentions, () => this.button.click());
+    private async showDialog(mentions: Mention[]): Promise<void> {
+        const mentionsDialog: HTMLElement = await HtmlHelper.mentionsDialog(mentions, () => this.button.click());
         $('body').append(mentionsDialog);
     }
 

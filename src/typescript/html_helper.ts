@@ -17,26 +17,26 @@ export class HtmlHelper {
         HtmlHelper._extract = await $.get(chrome.runtime.getURL("html/mention_extract.html"));
     }
 
-    static mentionsDialog(mentions: Mention[], onClose: VoidCallback): HTMLElement {
+    static async mentionsDialog(mentions: Mention[], onClose: VoidCallback): Promise<HTMLElement> {
         HtmlHelper.mentionIndex = 0;
         const dialog: Node = $.parseHTML(HtmlHelper._dialog)[0];
-        let overview: HTMLElement = HtmlHelper.mentionOverview(mentions[0]);
+        let overview: HTMLElement = await HtmlHelper.mentionOverview(mentions[0]);
         const jqDialog: JQuery<Node> = $(dialog);
         jqDialog.find("#checky__dialog-body").append(overview);
 
-        jqDialog.find("#checky__previous").click(() => {
+        jqDialog.find("#checky__previous").click(async () => {
             if(HtmlHelper.mentionIndex > 0) {
                 const focusedMention: Mention = mentions[--HtmlHelper.mentionIndex];
-                const newOverview: HTMLElement = HtmlHelper.mentionOverview(focusedMention);
+                const newOverview: HTMLElement = await HtmlHelper.mentionOverview(focusedMention);
                 $(overview).replaceWith(newOverview);
                 overview = newOverview;
             }
         });
 
-        jqDialog.find("#checky__next").click(() => {
+        jqDialog.find("#checky__next").click(async () => {
             if(HtmlHelper.mentionIndex < mentions.length - 1) {
                 const focusedMention: Mention = mentions[++HtmlHelper.mentionIndex];
-                const newOverview: HTMLElement = HtmlHelper.mentionOverview(focusedMention);
+                const newOverview: HTMLElement = await HtmlHelper.mentionOverview(focusedMention);
                 $(overview).replaceWith(newOverview);
                 overview = newOverview;
             }
@@ -55,9 +55,9 @@ export class HtmlHelper {
         return dialog as HTMLElement;
     }
 
-    private static mentionOverview(mention: Mention): HTMLElement {
+    private static async mentionOverview(mention: Mention): Promise<HTMLElement> {
         const overview: HTMLElement = $.parseHTML(HtmlHelper._overview.replace(/%mention%/g, mention.raw))[0] as HTMLElement;
-        const select: HTMLElement = $("<select></select>").append(HtmlHelper.mentionSuggestions(mention.suggestions)).get()[0];
+        const select: HTMLElement = $("<select></select>").append(HtmlHelper.mentionSuggestions(await mention.getSuggestions())).get()[0];
         $(overview).find("#checky__suggestions").append(select);
         $(overview).find("#checky__extracts").append(HtmlHelper.mentionExtracts(mention.extracts));
         return overview as HTMLElement;
