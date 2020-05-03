@@ -17,11 +17,28 @@
     h1
         margin: 0 0 20px 0
 
-.checky__mention-overview
-    .checky__mention-overview-header
+#checky__overview
+    #checky__overview-header
         display: flex
         justify-content: space-between
-        div
+        >div
             display: flex
             strong
                 margin-right: 5px
+    #checky__replace
+        height: 37px
+        input
+            margin: 0
+        #checky__suggestions
+            max-height: 200px
+            display: none
+            overflow-y: auto
+            box-shadow: 0 5px 10px #80808052
+            .checky__suggestion
+                padding: 10px
+                line-height: 30px
+                cursor: pointer
+                background-color: white
+                &:hover
+                    background-color: lightgrey
+            

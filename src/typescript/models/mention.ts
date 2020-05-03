@@ -7,6 +7,7 @@ export class Mention {
     readonly origin: MentionOrigin;
     readonly extracts: string[];
     readonly suggester: Suggester;
+    replacement: string;
 
     constructor(raw: string, username: string, origin: MentionOrigin, extracts: string[]) {
         this.raw = raw;

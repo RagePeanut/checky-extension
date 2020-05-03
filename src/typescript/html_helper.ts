@@ -19,15 +19,14 @@ export class HtmlHelper {
 
     static async mentionsDialog(mentions: Mention[], onClose: VoidCallback): Promise<HTMLElement> {
         HtmlHelper.mentionIndex = 0;
-        const dialog: Node = $.parseHTML(HtmlHelper._dialog)[0];
-        let overview: HTMLElement = await HtmlHelper.mentionOverview(mentions[0]);
-        const jqDialog: JQuery<Node> = $(dialog);
+        const jqDialog: JQuery<Node> = $($.parseHTML(HtmlHelper._dialog)[0]);
+        let overview: HTMLElement = await HtmlHelper.mentionOverview(mentions[0], jqDialog);
         jqDialog.find("#checky__dialog-body").append(overview);
 
         jqDialog.find("#checky__previous").click(async () => {
             if(HtmlHelper.mentionIndex > 0) {
                 const focusedMention: Mention = mentions[--HtmlHelper.mentionIndex];
-                const newOverview: HTMLElement = await HtmlHelper.mentionOverview(focusedMention);
+                const newOverview: HTMLElement = await HtmlHelper.mentionOverview(focusedMention, jqDialog);
                 $(overview).replaceWith(newOverview);
                 overview = newOverview;
             }
@@ -36,7 +35,7 @@ export class HtmlHelper {
         jqDialog.find("#checky__next").click(async () => {
             if(HtmlHelper.mentionIndex < mentions.length - 1) {
                 const focusedMention: Mention = mentions[++HtmlHelper.mentionIndex];
-                const newOverview: HTMLElement = await HtmlHelper.mentionOverview(focusedMention);
+                const newOverview: HTMLElement = await HtmlHelper.mentionOverview(focusedMention, jqDialog);
                 $(overview).replaceWith(newOverview);
                 overview = newOverview;
             }
@@ -44,7 +43,7 @@ export class HtmlHelper {
 
         jqDialog.find("#checky__done").click(() => {
             jqDialog.remove();
-            onClose()
+            onClose();
         });
 
         // jqDialog actually represents the dark background, clicking it removes the dialog but doesn't trigger onClose
@@ -52,15 +51,40 @@ export class HtmlHelper {
             if(event.target === event.currentTarget) jqDialog.remove();
         });
         
-        return dialog as HTMLElement;
+        return jqDialog.get()[0] as HTMLElement;
     }
 
-    private static async mentionOverview(mention: Mention): Promise<HTMLElement> {
-        const overview: HTMLElement = $.parseHTML(HtmlHelper._overview.replace(/%mention%/g, mention.raw))[0] as HTMLElement;
-        const select: HTMLElement = $("<select></select>").append(HtmlHelper.mentionSuggestions(await mention.getSuggestions())).get()[0];
-        $(overview).find("#checky__suggestions").append(select);
-        $(overview).find("#checky__extracts").append(HtmlHelper.mentionExtracts(mention.extracts));
-        return overview as HTMLElement;
+    private static async mentionOverview(mention: Mention, jqDialog: JQuery<Node>): Promise<HTMLElement> {
+        const overview: JQuery<Node> = $($.parseHTML(HtmlHelper._overview.replace(/%mention%/g, mention.username))[0]);
+        overview.find("#checky__suggestions").append(HtmlHelper.mentionSuggestions(await mention.getSuggestions()));
+        overview.find("#checky__extracts").append(HtmlHelper.mentionExtracts(mention.extracts));
+
+        const suggestionsContainer: JQuery<Node> = overview.find("#checky__suggestions");
+        jqDialog.mousedown(event => {
+            if(!$(event.target).hasClass("checky__replace-interactable"))
+                suggestionsContainer.css("display", "none");
+        });
+
+        const replaceInput: JQuery<Node> = overview.find("#checky__replace input");
+        const suggestions: JQuery<Node> = overview.find(".checky__suggestion");
+        suggestions.click(function() {
+            mention.replacement = $(this).text().trim();
+            replaceInput.val(mention.replacement);
+            suggestionsContainer.css("display", "none");
+        });
+
+        replaceInput.click(() => suggestionsContainer.css("display", "block"))
+                    .on("input", () => {
+                        mention.replacement = replaceInput.val() as string;
+                        const lcReplacement = mention.replacement.toLowerCase();
+                        suggestions.each(function() {
+                            const suggestion: JQuery<Node> = $(this);
+                            const containsInput: boolean = suggestion.text().toLowerCase().includes(lcReplacement);
+                            suggestion.css("display", containsInput ? "block" : "none");
+                        });
+                    });
+
+        return overview.get()[0] as HTMLElement;
     }
 
     private static mentionSuggestions(suggestions: string[]): HTMLElement[] {
