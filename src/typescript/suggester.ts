@@ -16,6 +16,10 @@ export class Suggester {
         this.suggestionsPromise = this.generateSuggestions(base);
     }
 
+    get hasGeneratedExtendedSuggestions(): boolean {
+        return this.extendedSuggestions !== undefined;
+    }
+
     private async generateSuggestions(base: string): Promise<void> {
         this.edits(base, true);
         this.suggestions = await Checker.filterValidSuggestions([...this._edits]);
@@ -27,7 +31,7 @@ export class Suggester {
     }
 
     async getExtendedSuggestions(): Promise<Suggestion[]> {
-        if(!this.extendedSuggestions) {
+        if(!this.hasGeneratedExtendedSuggestions) {
             this.extendedEdits = new Set(this._edits);
             for(const edit of this._edits)
                 this.edits(edit, false);

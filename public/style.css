@@ -55,6 +55,7 @@
 }
 
 #checky__overview #checky__replace #checky__suggestions {
+  position: relative;
   max-height: 200px;
   display: none;
   overflow-y: auto;
@@ -62,28 +63,29 @@
           box-shadow: 0 5px 10px #80808052;
 }
 
-#checky__overview #checky__replace #checky__suggestions .checky__suggestion {
+#checky__overview #checky__replace #checky__suggestions .checky__suggestion, #checky__overview #checky__replace #checky__suggestions #checky__more-suggestions {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  height: 30px;
   padding: 10px;
   cursor: pointer;
   background-color: white;
 }
 
-#checky__overview #checky__replace #checky__suggestions .checky__suggestion * {
+#checky__overview #checky__replace #checky__suggestions .checky__suggestion *, #checky__overview #checky__replace #checky__suggestions #checky__more-suggestions * {
   pointer-events: none;
 }
 
-#checky__overview #checky__replace #checky__suggestions .checky__suggestion img {
-  height: 30px;
+#checky__overview #checky__replace #checky__suggestions .checky__suggestion img, #checky__overview #checky__replace #checky__suggestions #checky__more-suggestions img {
+  height: inherit;
   margin-right: 10px;
 }
 
-#checky__overview #checky__replace #checky__suggestions .checky__suggestion:hover {
+#checky__overview #checky__replace #checky__suggestions .checky__suggestion:hover, #checky__overview #checky__replace #checky__suggestions #checky__more-suggestions:hover {
   background-color: lightgrey;
 }
 /*# sourceMappingURL=style.css.map */

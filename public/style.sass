@@ -35,16 +35,17 @@
             display: none
             overflow-y: auto
             box-shadow: 0 5px 10px #80808052
-            .checky__suggestion
+            .checky__suggestion, #checky__more-suggestions
                 display: flex
                 align-items: center
+                height: 30px
                 padding: 10px
                 cursor: pointer
                 background-color: white
                 *
                     pointer-events: none
                 img
-                    height: 30px
+                    height: inherit
                     margin-right: 10px
                 &:hover
                     background-color: lightgrey

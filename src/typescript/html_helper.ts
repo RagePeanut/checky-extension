@@ -2,20 +2,25 @@ import * as $ from 'jquery';
 
 import { Mention } from './models/mention';
 import { Suggestion } from './models/suggestion';
+import { Suggester } from './suggester';
 
 export class HtmlHelper {
     private static _dialog: string;
     private static _overview: string;
     private static _suggestion: string;
     private static _extract: string;
+    private static _moreSuggestions: string;
 
     private static mentionIndex: number;
 
     static async init() {
-        HtmlHelper._dialog = await $.get(chrome.runtime.getURL("html/mentions_dialog.html"));
-        HtmlHelper._overview = await $.get(chrome.runtime.getURL("html/mention_overview.html"));
-        HtmlHelper._suggestion = await $.get(chrome.runtime.getURL("html/mention_suggestion.html"));
-        HtmlHelper._extract = await $.get(chrome.runtime.getURL("html/mention_extract.html"));
+        [ HtmlHelper._dialog, HtmlHelper._overview, HtmlHelper._suggestion, HtmlHelper._extract, HtmlHelper._moreSuggestions ] = await Promise.all([
+            $.get(chrome.runtime.getURL("html/mentions_dialog.html")),
+            $.get(chrome.runtime.getURL("html/mention_overview.html")),
+            $.get(chrome.runtime.getURL("html/mention_suggestion.html")),
+            $.get(chrome.runtime.getURL("html/mention_extract.html")),
+            $.get(chrome.runtime.getURL("html/mention_more-suggestions.html"))
+        ]);
     }
 
     static async mentionsDialog(mentions: Mention[], onClose: VoidCallback): Promise<HTMLElement> {
@@ -23,7 +28,8 @@ export class HtmlHelper {
         const jqDialog: JQuery<Node> = $($.parseHTML(HtmlHelper._dialog)[0]);
         let overview: HTMLElement = await HtmlHelper.mentionOverview(mentions[0], jqDialog);
         jqDialog.find("#checky__dialog-body").append(overview);
-
+        
+        // Previous button
         jqDialog.find("#checky__previous").click(async () => {
             if(HtmlHelper.mentionIndex > 0) {
                 const focusedMention: Mention = mentions[--HtmlHelper.mentionIndex];
@@ -32,7 +38,7 @@ export class HtmlHelper {
                 overview = newOverview;
             }
         });
-
+        // Next button
         jqDialog.find("#checky__next").click(async () => {
             if(HtmlHelper.mentionIndex < mentions.length - 1) {
                 const focusedMention: Mention = mentions[++HtmlHelper.mentionIndex];
@@ -41,7 +47,7 @@ export class HtmlHelper {
                 overview = newOverview;
             }
         });
-
+        // Done button
         jqDialog.find("#checky__done").click(() => {
             jqDialog.remove();
             onClose();
@@ -57,28 +63,27 @@ export class HtmlHelper {
 
     private static async mentionOverview(mention: Mention, jqDialog: JQuery<Node>): Promise<HTMLElement> {
         const overview: JQuery<Node> = $($.parseHTML(HtmlHelper._overview.replace(/%mention%/g, mention.username))[0]);
-        overview.find("#checky__suggestions").append(HtmlHelper.mentionSuggestions(await mention.getSuggestions()));
-        overview.find("#checky__extracts").append(HtmlHelper.mentionExtracts(mention.extracts));
 
-        const suggestionsContainer: JQuery<Node> = overview.find("#checky__suggestions");
-        jqDialog.mousedown(event => {
-            if(!$(event.target).hasClass("checky__replace-interactable"))
-                suggestionsContainer.css("display", "none");
-        });
-
+        const suggestions: JQuery<Node> = overview.find("#checky__suggestions");
         const replaceInput: JQuery<Node> = overview.find("#checky__replace > input");
-        const suggestions: JQuery<Node> = overview.find(".checky__suggestion");
-        suggestions.click(function() {
+        await HtmlHelper.setSuggestions(mention.suggester, suggestions, function() {
             mention.replacement = $(this).find("input").val().toString();
             replaceInput.val(mention.replacement);
-            suggestionsContainer.css("display", "none");
+            suggestions.css("display", "none");
         });
 
-        replaceInput.click(() => suggestionsContainer.css("display", "block"))
+        HtmlHelper.setExtracts(mention.extracts, overview.find("#checky__extracts"));
+
+        jqDialog.mousedown(event => {
+            if(!$(event.target).hasClass("checky__replace-interactable"))
+                suggestions.css("display", "none");
+        });
+
+        replaceInput.click(() => suggestions.css("display", "block"))
                     .on("input", () => {
                         mention.replacement = replaceInput.val() as string;
                         const lcReplacement = mention.replacement.toLowerCase();
-                        suggestions.each(function() {
+                        overview.find(".checky__suggestion").each(function() {
                             const suggestion: JQuery<Node> = $(this);
                             const containsInput: boolean = suggestion.find("input").val().toString().includes(lcReplacement);
                             suggestion.css("display", containsInput ? "flex" : "none");
@@ -88,17 +93,28 @@ export class HtmlHelper {
         return overview.get()[0] as HTMLElement;
     }
 
-    private static mentionSuggestions(suggestions: Suggestion[]): HTMLElement[] {
-        const options: string = suggestions.map(suggestion => HtmlHelper._suggestion.replace(/%suggestion%/g, suggestion.username)
-                                                                                    .replace(/%reputation%/g, suggestion.reputation.toString()))
-                                           .join("");
-        return $(options).get();
+    private static async setSuggestions(suggester: Suggester, parent: JQuery<Node>, onSuggestionClick: VoidCallback): Promise<void> {
+        const suggestions: Suggestion[] = suggester.hasGeneratedExtendedSuggestions ? await suggester.getExtendedSuggestions()
+                                                                                    : await suggester.getSuggestions();
+        let options: string = suggestions.map(suggestion => HtmlHelper._suggestion.replace(/%suggestion%/g, suggestion.username)
+                                                                                  .replace(/%reputation%/g, suggestion.reputation.toString()))
+                                         .join("");
+        if(!suggester.hasGeneratedExtendedSuggestions) options += this._moreSuggestions;
+        parent.html(options);
+        parent.find(".checky__suggestion").click(onSuggestionClick);
+        if(!suggester.hasGeneratedExtendedSuggestions) {
+            parent.find("#checky__more-suggestions").click(async function() {
+                $(this).text("Generating more suggestions...");
+                await suggester.getExtendedSuggestions();
+                HtmlHelper.setSuggestions(suggester, parent, onSuggestionClick);
+            });
+        }
     }
 
-    private static mentionExtracts(extracts: string[]): HTMLElement[] {
+    private static setExtracts(extracts: string[], parent: JQuery<Node>): void {
         const divs: string = extracts.map((extract, index) => HtmlHelper._extract.replace(/%extract_number%/g, (index + 1).toString())
                                                                                  .replace(/%extract%/g, extract))
                                      .join("");
-        return $(divs).get();
+        parent.html(divs);
     }
 }
