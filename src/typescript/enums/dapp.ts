@@ -1,3 +1,3 @@
 export enum Dapp {
-    TEST
+    HIVE_BLOG
 }

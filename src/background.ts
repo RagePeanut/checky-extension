@@ -5,7 +5,7 @@ chrome.tabs.onUpdated.addListener((tabId: number, changeInfo: chrome.tabs.TabCha
     if(changeInfo.status == "complete") {
         chrome.tabs.sendMessage(
             tabId,
-            new Message(Dapp.TEST, tab.url)
+            new Message(Dapp.HIVE_BLOG, tab.url)
         );
     }
 });

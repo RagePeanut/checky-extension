@@ -1,12 +1,12 @@
+import { HiveBlogHelper } from './typescript/dapp_helpers/hive_blog_helper';
 import { Dapp } from './typescript/enums/dapp';
 import { DappHelper } from './typescript/dapp_helpers/dapp_helper';
 import { HtmlHelper } from './typescript/html_helper';
 import { Message } from './typescript/models/message';
 import { ResponseCallback } from './typescript/types';
-import { TestHelper } from './typescript/dapp_helpers/test_helper';
 
 const dappHelpers: Map<Dapp, DappHelper> = new Map([
-    [Dapp.TEST, new TestHelper()]
+    [Dapp.HIVE_BLOG, new HiveBlogHelper()]
 ]);
 
 const parserInitialization: Promise<void> = HtmlHelper.init();
