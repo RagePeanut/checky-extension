@@ -35,10 +35,16 @@
             overflow-y: auto
             box-shadow: 0 5px 10px #80808052
             .checky__suggestion
+                display: flex
+                align-items: center
                 padding: 10px
-                line-height: 30px
                 cursor: pointer
                 background-color: white
+                *
+                    pointer-events: none
+                img
+                    height: 30px
+                    margin-right: 10px
                 &:hover
                     background-color: lightgrey
             

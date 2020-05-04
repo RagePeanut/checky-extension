@@ -1,5 +1,6 @@
 import { MentionOrigin } from '../enums/mention_origin';
 import { Suggester } from '../suggester';
+import { Suggestion } from './suggestion';
 
 export class Mention {
     readonly username: string;
@@ -17,11 +18,11 @@ export class Mention {
         this.suggester = new Suggester(username);
     }
 
-    async getSuggestions(): Promise<string[]> {
+    async getSuggestions(): Promise<Suggestion[]> {
         return this.suggester.getSuggestions();
     };
 
-    async getSuggestionsPlus(): Promise<string[]> {
+    async getSuggestionsPlus(): Promise<Suggestion[]> {
         return this.suggester.getExtendedSuggestions();
     }
 }

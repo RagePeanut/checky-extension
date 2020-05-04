@@ -1,6 +1,7 @@
 import { Hive } from "./hive";
 import { Mention } from "./models/mention";
 import { ExtendedAccount } from "@hivechain/dhive";
+import { Suggestion } from "./models/suggestion";
 
 export class Checker {
     static async filterWrongMentions(mentions: Mention[]): Promise<Mention[]> {
@@ -21,14 +22,14 @@ export class Checker {
         return wrongMentions;
     }
 
-    static async filterValidUsernames(usernames: string[]): Promise<string[]> {
-        const valid: string[] = [];
-        for(let i = 0; i < usernames.length; i += 10000) {
+    static async filterValidSuggestions(suggestions: string[]): Promise<Suggestion[]> {
+        const valid: Suggestion[] = [];
+        for(let i = 0; i < suggestions.length; i += 10000) {
             try {
-                const slice: string[] = usernames.slice(i, i + 10000);
+                const slice: string[] = suggestions.slice(i, i + 10000);
                 const accounts: ExtendedAccount[] = await Hive.getAccounts(slice);
                 for(let j = 0; j < slice.length; j++) {
-                    if(accounts[j]) valid.push(accounts[j].name);
+                    if(accounts[j]) valid.push(new Suggestion(accounts[j]));
                 }
             } catch(e) {
                 // Handles API not working

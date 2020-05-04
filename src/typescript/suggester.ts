@@ -1,4 +1,5 @@
 import { Checker } from "./checker";
+import { Suggestion } from "./models/suggestion";
 
 export class Suggester {
     private static readonly UNALLOWED_REGEX: RegExp = /(^|\.)[\d.-]|[.-](\.|$)|-{2}|.{17}|(^|\.).{0,2}(\.|$)/;
@@ -6,8 +7,8 @@ export class Suggester {
     
     private readonly _edits: Set<string>;
     private extendedEdits: Set<string>;
-    private suggestions: string[];
-    private extendedSuggestions: string[];
+    private suggestions: Suggestion[];
+    private extendedSuggestions: Suggestion[];
     private readonly suggestionsPromise: Promise<void>;
 
     constructor(base: string) {
@@ -17,20 +18,20 @@ export class Suggester {
 
     private async generateSuggestions(base: string): Promise<void> {
         this.edits(base, true);
-        this.suggestions = await Checker.filterValidUsernames([...this._edits]);
+        this.suggestions = await Checker.filterValidSuggestions([...this._edits]);
     }
 
-    async getSuggestions(): Promise<string[]> {
+    async getSuggestions(): Promise<Suggestion[]> {
         await this.suggestionsPromise;
         return this.suggestions;
     }
 
-    async getExtendedSuggestions(): Promise<string[]> {
+    async getExtendedSuggestions(): Promise<Suggestion[]> {
         if(!this.extendedSuggestions) {
             this.extendedEdits = new Set(this._edits);
             for(const edit of this._edits)
                 this.edits(edit, false);
-            this.extendedSuggestions = await Checker.filterValidUsernames([...this.extendedEdits]);
+            this.extendedSuggestions = await Checker.filterValidSuggestions([...this.extendedEdits]);
         }
         return this.extendedSuggestions;
     }

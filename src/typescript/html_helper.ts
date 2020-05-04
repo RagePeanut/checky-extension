@@ -1,6 +1,7 @@
 import * as $ from 'jquery';
 
 import { Mention } from './models/mention';
+import { Suggestion } from './models/suggestion';
 
 export class HtmlHelper {
     private static _dialog: string;
@@ -65,10 +66,10 @@ export class HtmlHelper {
                 suggestionsContainer.css("display", "none");
         });
 
-        const replaceInput: JQuery<Node> = overview.find("#checky__replace input");
+        const replaceInput: JQuery<Node> = overview.find("#checky__replace > input");
         const suggestions: JQuery<Node> = overview.find(".checky__suggestion");
         suggestions.click(function() {
-            mention.replacement = $(this).text().trim();
+            mention.replacement = $(this).find("input").val().toString();
             replaceInput.val(mention.replacement);
             suggestionsContainer.css("display", "none");
         });
@@ -79,23 +80,24 @@ export class HtmlHelper {
                         const lcReplacement = mention.replacement.toLowerCase();
                         suggestions.each(function() {
                             const suggestion: JQuery<Node> = $(this);
-                            const containsInput: boolean = suggestion.text().toLowerCase().includes(lcReplacement);
-                            suggestion.css("display", containsInput ? "block" : "none");
+                            const containsInput: boolean = suggestion.find("input").val().toString().includes(lcReplacement);
+                            suggestion.css("display", containsInput ? "flex" : "none");
                         });
                     });
 
         return overview.get()[0] as HTMLElement;
     }
 
-    private static mentionSuggestions(suggestions: string[]): HTMLElement[] {
-        const options: string = suggestions.map(suggestion => HtmlHelper._suggestion.replace(/%suggestion%/g, suggestion))
+    private static mentionSuggestions(suggestions: Suggestion[]): HTMLElement[] {
+        const options: string = suggestions.map(suggestion => HtmlHelper._suggestion.replace(/%suggestion%/g, suggestion.username)
+                                                                                    .replace(/%reputation%/g, suggestion.reputation.toString()))
                                            .join("");
         return $(options).get();
     }
 
     private static mentionExtracts(extracts: string[]): HTMLElement[] {
         const divs: string = extracts.map((extract, index) => HtmlHelper._extract.replace(/%extract_number%/g, (index + 1).toString())
-                                                                                        .replace(/%extract%/g, extract))
+                                                                                 .replace(/%extract%/g, extract))
                                      .join("");
         return $(divs).get();
     }
