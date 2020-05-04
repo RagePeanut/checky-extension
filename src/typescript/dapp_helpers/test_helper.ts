@@ -34,7 +34,13 @@ export class TestHelper implements DappHelper {
     }
 
     private async showDialog(mentions: Mention[]): Promise<void> {
-        const mentionsDialog: HTMLElement = await HtmlHelper.mentionsDialog(mentions, () => this.button.click());
+        const mentionsDialog: HTMLElement = await HtmlHelper.mentionsDialog(mentions, () => {
+            mentions.forEach(mention => {
+                const mentionRegex: RegExp = new RegExp([...mention.raw].join("|"), "g");
+                this.post.value = this.post.value.replace(mentionRegex, "@" + mention.replacement);
+            });
+            this.button.click();
+        });
         $('body').append(mentionsDialog);
     }
 

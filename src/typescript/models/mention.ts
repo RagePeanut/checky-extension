@@ -4,14 +4,15 @@ import { Suggestion } from './suggestion';
 
 export class Mention {
     readonly username: string;
-    readonly raw: string;
+    readonly raw: Set<string>;
     readonly origin: MentionOrigin;
     readonly extracts: string[];
     readonly suggester: Suggester;
     replacement: string;
 
     constructor(raw: string, username: string, origin: MentionOrigin, extracts: string[]) {
-        this.raw = raw;
+        this.raw = new Set();
+        this.raw.add(raw);
         this.username = username;
         this.origin = origin;
         this.extracts = extracts;

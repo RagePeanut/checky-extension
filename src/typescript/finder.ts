@@ -10,8 +10,11 @@ export class Finder {
         while(match != null) {
             const username: string = match[2];
             // Testing for duplicates
-            if(!mentions.some(mention => mention.username === username)) {
-                const rawMention: string = match[0].substring(1);
+            const matchingMention: Mention = mentions.find(mention => mention.username === username);
+            // Removing the first char if it's not an @ char
+            const rawMention: string = match[0][0] !== "@" ? match[0].substring(1) : match[0];
+            if(matchingMention) matchingMention.raw.add(rawMention);
+            else {
                 const mention: Mention = new Mention(rawMention, username, origin, Finder.findExtracts(rawMention, text));
                 mentions.push(mention);
             }
