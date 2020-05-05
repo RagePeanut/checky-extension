@@ -66,8 +66,10 @@ export abstract class DappHelper {
     private async showDialog(mentions: Mention[]): Promise<void> {
         const mentionsDialog: HTMLElement = await HtmlHelper.mentionsDialog(mentions, this.dappId, () => {
             mentions.forEach(mention => {
-                const mentionRegex: RegExp = new RegExp([...mention.raw].join("|"), "g");
-                this.post.val((_index, value) => value.replace(mentionRegex, "@" + mention.replacement));
+                if(mention.replacement && mention.replacement.trim() !== "") {
+                    const mentionRegex: RegExp = new RegExp([...mention.raw].join("|"), "g");
+                    this.post.val((_index, value) => value.replace(mentionRegex, "@" + mention.replacement));
+                }
             });
             this.post.get()[0].dispatchEvent(new Event("input", { bubbles: true }));
             this.button.click();
