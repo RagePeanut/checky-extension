@@ -23,7 +23,7 @@ export class HtmlHelper {
         ]);
     }
 
-    static async mentionsDialog(mentions: Mention[], dappId: string, onClose: VoidCallback): Promise<HTMLElement> {
+    static async mentionsDialog(mentions: Mention[], dappId: string, onDone: VoidCallback): Promise<HTMLElement> {
         HtmlHelper.mentionIndex = 0;
         const jqDialog: JQuery<Node> = $($.parseHTML(HtmlHelper._dialog.replace(/%dapp_id%/g, dappId))[0]);
         let overview: HTMLElement = await HtmlHelper.mentionOverview(mentions[0], jqDialog);
@@ -50,11 +50,14 @@ export class HtmlHelper {
         // Done button
         jqDialog.find("#checky__done").click(() => {
             jqDialog.remove();
-            onClose();
+            onDone();
         });
 
-        // jqDialog actually represents the dark background, clicking it removes the dialog but doesn't trigger onClose
+        // jqDialog actually represents the dark background, clicking it removes the dialog but doesn't trigger onDone
         jqDialog.click(event => {
+            if(event.target === event.currentTarget) jqDialog.remove();
+        });
+        jqDialog.find(".close-button").click(event => {
             if(event.target === event.currentTarget) jqDialog.remove();
         });
         
