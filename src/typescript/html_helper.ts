@@ -69,6 +69,8 @@ export class HtmlHelper {
 
         const suggestions: JQuery<Node> = overview.find("#checky__suggestions");
         const replaceInput: JQuery<Node> = overview.find("#checky__replace > input");
+        replaceInput.val(mention.replacement);
+
         await HtmlHelper.setSuggestions(mention.suggester, suggestions, function() {
             mention.replacement = $(this).find("input").val().toString();
             replaceInput.val(mention.replacement);
