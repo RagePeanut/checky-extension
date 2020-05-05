@@ -59,8 +59,6 @@
   width: 100%;
   display: none;
   overflow-y: auto;
-  -webkit-box-shadow: 0 5px 10px #80808052;
-          box-shadow: 0 5px 10px #80808052;
 }
 
 #checky__replace #checky__suggestions .checky__suggestion, #checky__replace #checky__suggestions #checky__more-suggestions {
@@ -73,9 +71,10 @@
   height: 30px;
   padding: 10px;
   cursor: pointer;
-  background-color: white;
   -webkit-box-sizing: content-box;
           box-sizing: content-box;
+  -webkit-transition: 250ms ease-in-out background-color;
+  transition: 250ms ease-in-out background-color;
 }
 
 #checky__replace #checky__suggestions .checky__suggestion *, #checky__replace #checky__suggestions #checky__more-suggestions * {
@@ -86,10 +85,6 @@
   height: inherit;
   width: inherit;
   margin-right: 10px;
-}
-
-#checky__replace #checky__suggestions .checky__suggestion:hover, #checky__replace #checky__suggestions #checky__more-suggestions:hover {
-  background-color: lightgrey;
 }
 
 .checky__hive-blog #checky__dialog {
@@ -109,7 +104,6 @@
 }
 
 .checky__hive-blog #checky__extracts {
-  background-color: #f4f4f4;
   padding: 1rem;
 }
 
@@ -123,5 +117,43 @@
 
 .checky__hive-blog#checky__background {
   overflow-y: hidden;
+}
+
+.theme-light .checky__hive-blog #checky__extracts {
+  background-color: #f4f4f4;
+}
+
+.theme-light .checky__hive-blog #checky__replace #checky__suggestions {
+  -webkit-box-shadow: 0 5px 10px #80808052;
+          box-shadow: 0 5px 10px #80808052;
+}
+
+.theme-light .checky__hive-blog #checky__replace #checky__suggestions .checky__suggestion, .theme-light .checky__hive-blog #checky__replace #checky__suggestions #checky__more-suggestions {
+  background-color: white;
+}
+
+.theme-light .checky__hive-blog #checky__replace #checky__suggestions .checky__suggestion:hover, .theme-light .checky__hive-blog #checky__replace #checky__suggestions #checky__more-suggestions:hover {
+  background-color: lightgrey;
+}
+
+.theme-dark .checky__hive-blog #checky__extracts {
+  background-color: #2c3136;
+}
+
+.theme-dark .checky__hive-blog #checky__extracts blockquote p {
+  color: #A6B2BA;
+}
+
+.theme-dark .checky__hive-blog #checky__replace #checky__suggestions {
+  -webkit-box-shadow: 0 1px 3px black;
+          box-shadow: 0 1px 3px black;
+}
+
+.theme-dark .checky__hive-blog #checky__replace #checky__suggestions .checky__suggestion, .theme-dark .checky__hive-blog #checky__replace #checky__suggestions #checky__more-suggestions {
+  background-color: #212529;
+}
+
+.theme-dark .checky__hive-blog #checky__replace #checky__suggestions .checky__suggestion:hover, .theme-dark .checky__hive-blog #checky__replace #checky__suggestions #checky__more-suggestions:hover {
+  background-color: #2c3136;
 }
 /*# sourceMappingURL=style.css.map */
