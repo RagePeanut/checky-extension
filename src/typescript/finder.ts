@@ -15,16 +15,17 @@ export class Finder {
             const rawMention: string = match[0][0] !== "@" ? match[0].substring(1) : match[0];
             if(matchingMention) matchingMention.raw.add(rawMention);
             else {
-                const mention: Mention = new Mention(rawMention, username, origin, Finder.findExtracts(rawMention, text));
+                const mention: Mention = new Mention(rawMention, username, origin);
                 mentions.push(mention);
             }
             match = Finder.MENTION_REGEX.exec(text);
         }
+        mentions.forEach(mention => mention.setExtracts(text));
         return mentions;
     }
 
-    private static findExtracts(rawMention: string, text: string): string[] {
-        const extractsRegex: RegExp = new RegExp('(?:\\S+\\s+){0,20}\\S*' + rawMention + '(?:[^a-zA-Z\d]\\S*(?:\\s+\\S+){0,20}|$)', 'g');
+    static findExtracts(rawMentions: string[], text: string): string[] {
+        const extractsRegex: RegExp = new RegExp('(?:\\S+\\s+){0,20}\\S*' + rawMentions.join("|") + '(?:[^a-zA-Z\d]\\S*(?:\\s+\\S+){0,20}|$)', 'g');
         return text.match(extractsRegex);
     }
 }
