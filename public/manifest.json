@@ -13,7 +13,7 @@
     "content_scripts": [
         {
             "matches": [
-                "*://hive.blog/submit.html"
+                "*://hive.blog/*"
             ],
             "css": ["style.css"],
             "js": ["js/vendor.js", "js/content.js"]

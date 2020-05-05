@@ -25,7 +25,7 @@ export abstract class DappHelper {
      * 
      * /!\ Needs to call replaceSubmitButton()
      */
-    protected abstract initializeEditPage(): void;
+    protected abstract initializeSubmitPage(): void;
     /**
      * Clones the submit button.
      */

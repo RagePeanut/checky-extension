@@ -1,13 +1,19 @@
 import * as $ from 'jquery';
 
 import { DappHelper } from "./dapp_helper";
+import { Page } from "../enums/page";
 
 export class HiveBlogHelper extends DappHelper {
+
+    private static readonly SUBMIT_REGEX: RegExp = /hive\.blog\/submit\.html/;
+
+    private currentPage: Page;
+
     constructor() {
         super("hive-blog");
     }
 
-    protected initializeEditPage(): void {
+    protected initializeSubmitPage(): void {
         this.replaceSubmitButton("button[type=submit]");
         this.post = $(".ReplyEditor__body textarea");
         this.title = $(".ReplyEditor__title");
@@ -23,7 +29,12 @@ export class HiveBlogHelper extends DappHelper {
         return clone;
     }
     
-    onUrlChange(_url: string): void {
-        this.initializeEditPage();
+    onUrlChange(url: string): void {
+        if(HiveBlogHelper.SUBMIT_REGEX.test(url)) {
+            if(this.currentPage !== Page.SUBMIT) {
+                this.initializeSubmitPage();
+            }
+            this.currentPage = Page.SUBMIT;
+        } else this.currentPage = Page.OTHER;
     }
 }
