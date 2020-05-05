@@ -1,9 +1,4 @@
 #checky__background {
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -13,18 +8,15 @@
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  background-color: rgba(0, 0, 0, 0.7);
 }
 
-#checky__dialog {
-  width: 750px;
-  border-radius: 8px;
-  background-color: white;
-  padding: 20px;
-}
-
-#checky__dialog h1 {
-  margin: 0 0 20px 0;
+#checky__dialog #checky__dialog-footer {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
 }
 
 #checky__overview #checky__overview-header {
@@ -34,36 +26,44 @@
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 #checky__overview #checky__overview-header > div {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 #checky__overview #checky__overview-header > div strong {
   margin-right: 5px;
 }
 
-#checky__overview #checky__replace {
-  height: 37px;
+#checky__overview #checky__overview-body {
+  overflow-y: auto;
 }
 
-#checky__overview #checky__replace input {
-  margin: 0;
-}
-
-#checky__overview #checky__replace #checky__suggestions {
+#checky__replace {
   position: relative;
+  width: 250px;
+}
+
+#checky__replace #checky__suggestions {
+  position: absolute;
   max-height: 200px;
+  width: 100%;
   display: none;
   overflow-y: auto;
   -webkit-box-shadow: 0 5px 10px #80808052;
           box-shadow: 0 5px 10px #80808052;
 }
 
-#checky__overview #checky__replace #checky__suggestions .checky__suggestion, #checky__overview #checky__replace #checky__suggestions #checky__more-suggestions {
+#checky__replace #checky__suggestions .checky__suggestion, #checky__replace #checky__suggestions #checky__more-suggestions {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -74,18 +74,54 @@
   padding: 10px;
   cursor: pointer;
   background-color: white;
+  -webkit-box-sizing: content-box;
+          box-sizing: content-box;
 }
 
-#checky__overview #checky__replace #checky__suggestions .checky__suggestion *, #checky__overview #checky__replace #checky__suggestions #checky__more-suggestions * {
+#checky__replace #checky__suggestions .checky__suggestion *, #checky__replace #checky__suggestions #checky__more-suggestions * {
   pointer-events: none;
 }
 
-#checky__overview #checky__replace #checky__suggestions .checky__suggestion img, #checky__overview #checky__replace #checky__suggestions #checky__more-suggestions img {
+#checky__replace #checky__suggestions .checky__suggestion img, #checky__replace #checky__suggestions #checky__more-suggestions img {
   height: inherit;
+  width: inherit;
   margin-right: 10px;
 }
 
-#checky__overview #checky__replace #checky__suggestions .checky__suggestion:hover, #checky__overview #checky__replace #checky__suggestions #checky__more-suggestions:hover {
+#checky__replace #checky__suggestions .checky__suggestion:hover, #checky__replace #checky__suggestions #checky__more-suggestions:hover {
   background-color: lightgrey;
+}
+
+.checky__hive-blog #checky__dialog {
+  display: block;
+  top: 0;
+}
+
+.checky__hive-blog #checky__dialog #checky__dialog-footer {
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: reverse;
+      -ms-flex-direction: row-reverse;
+          flex-direction: row-reverse;
+}
+
+.checky__hive-blog #checky__overview-body {
+  max-height: 109px;
+}
+
+.checky__hive-blog #checky__extracts {
+  background-color: #f4f4f4;
+  padding: 1rem;
+}
+
+.checky__hive-blog #checky__extracts .checky__extract:last-child blockquote, .checky__hive-blog #checky__extracts .checky__extract:last-child p {
+  margin: 0;
+}
+
+.checky__hive-blog .button {
+  margin-right: 0 !important;
+}
+
+.checky__hive-blog#checky__background {
+  overflow-y: hidden;
 }
 /*# sourceMappingURL=style.css.map */

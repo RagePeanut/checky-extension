@@ -3,6 +3,10 @@ import * as $ from 'jquery';
 import { DappHelper } from "./dapp_helper";
 
 export class HiveBlogHelper extends DappHelper {
+    constructor() {
+        super("hive-blog");
+    }
+
     protected initializeEditPage(): void {
         this.replaceSubmitButton("button[type=submit]");
         this.post = $(".ReplyEditor__body textarea");

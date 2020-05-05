@@ -2,7 +2,7 @@ import { MentionOrigin } from './enums/mention_origin';
 import { Mention } from './models/mention';
 
 export class Finder {
-    static readonly MENTION_REGEX: RegExp = /(^|[^\w=/#])@([a-z][a-z\d.-]*[a-z\d])/gimu;
+    private static readonly MENTION_REGEX: RegExp = /(^|[^\w=/#])@([a-z][a-z\d.-]*[a-z\d])/gimu;
 
     static findMentions(text: string, origin: MentionOrigin): Mention[] {
         const mentions: Mention[] = [];

@@ -23,9 +23,9 @@ export class HtmlHelper {
         ]);
     }
 
-    static async mentionsDialog(mentions: Mention[], onClose: VoidCallback): Promise<HTMLElement> {
+    static async mentionsDialog(mentions: Mention[], dappId: string, onClose: VoidCallback): Promise<HTMLElement> {
         HtmlHelper.mentionIndex = 0;
-        const jqDialog: JQuery<Node> = $($.parseHTML(HtmlHelper._dialog)[0]);
+        const jqDialog: JQuery<Node> = $($.parseHTML(HtmlHelper._dialog.replace(/%dapp_id%/g, dappId))[0]);
         let overview: HTMLElement = await HtmlHelper.mentionOverview(mentions[0], jqDialog);
         jqDialog.find("#checky__dialog-body").append(overview);
         
@@ -72,7 +72,7 @@ export class HtmlHelper {
             suggestions.css("display", "none");
         });
 
-        HtmlHelper.setExtracts(mention.extracts, overview.find("#checky__extracts"));
+        HtmlHelper.setExtracts(mention.extracts, mention, overview.find("#checky__extracts"));
 
         jqDialog.mousedown(event => {
             if(!$(event.target).hasClass("checky__replace-interactable"))
@@ -111,9 +111,11 @@ export class HtmlHelper {
         }
     }
 
-    private static setExtracts(extracts: string[], parent: JQuery<Node>): void {
+    private static setExtracts(extracts: string[], mention: Mention, parent: JQuery<Node>): void {
+        const rawMentionRegex: RegExp = new RegExp([...mention.raw].join("|"), "g");
         const divs: string = extracts.map((extract, index) => HtmlHelper._extract.replace(/%extract_number%/g, (index + 1).toString())
-                                                                                 .replace(/%extract%/g, extract))
+                                                                                 .replace(/%extract%/g, extract)
+                                                                                 .replace(rawMentionRegex, (matched) => "<strong>" + matched + "</strong>"))
                                      .join("");
         parent.html(divs);
     }

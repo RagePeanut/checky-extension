@@ -9,7 +9,11 @@ import { HtmlHelper } from "../html_helper";
 export abstract class DappHelper {
     protected button: JQuery<Node>;
     protected post: JQuery<Node>;
-    protected title: JQuery<Node>
+    protected title: JQuery<Node>;
+    protected dappId: string;
+    constructor(dappName: string) {
+        this.dappId = "checky__" + dappName;
+    }
     /**
      * Called on URL change to update the helper data and change the page at the new URL.
      * 
@@ -28,7 +32,7 @@ export abstract class DappHelper {
     protected abstract cloneButton(): JQuery<Node>;
     /**
      * Replaces the submit button by a clone that will act as a middleman between the user
-     * and the dapp. This allows the extension to perform its own taks before the dapp.
+     * and the dapp. This allows the extension to perform its own tasks before the dapp.
      */
     protected replaceSubmitButton(buttonIdentifier: string): void {
         this.button = $(buttonIdentifier);
@@ -60,7 +64,7 @@ export abstract class DappHelper {
      * mentions by.
      */
     private async showDialog(mentions: Mention[]): Promise<void> {
-        const mentionsDialog: HTMLElement = await HtmlHelper.mentionsDialog(mentions, () => {
+        const mentionsDialog: HTMLElement = await HtmlHelper.mentionsDialog(mentions, this.dappId, () => {
             mentions.forEach(mention => {
                 const mentionRegex: RegExp = new RegExp([...mention.raw].join("|"), "g");
                 this.post.val((_index, value) => value.replace(mentionRegex, "@" + mention.replacement));
