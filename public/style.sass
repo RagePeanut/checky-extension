@@ -57,8 +57,16 @@
         .checky__extract:last-child
             blockquote, p
                 margin: 0
-    .button
-        margin-right: 0 !important
+    #checky__navigation-btns
+        .button
+            margin-right: 0 !important
+            &.hollow
+                &:focus
+                    color: #788187
+                    border: none
+                    outline: none
+                &:hover
+                    color: #E31337
     &#checky__background
         overflow-y: hidden
 .theme-light

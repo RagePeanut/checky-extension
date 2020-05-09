@@ -111,8 +111,18 @@
   margin: 0;
 }
 
-.checky__hive-blog .button {
+.checky__hive-blog #checky__navigation-btns .button {
   margin-right: 0 !important;
+}
+
+.checky__hive-blog #checky__navigation-btns .button.hollow:focus {
+  color: #788187;
+  border: none;
+  outline: none;
+}
+
+.checky__hive-blog #checky__navigation-btns .button.hollow:hover {
+  color: #E31337;
 }
 
 .checky__hive-blog#checky__background {
